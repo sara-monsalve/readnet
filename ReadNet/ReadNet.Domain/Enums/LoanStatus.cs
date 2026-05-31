@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace ReadNet.Domain.Enums;
 
-namespace ReadNet.Domain.Enums
+public enum LoanStatus
 {
-    class LoanStatus
-    {
-    }
+    Active,
+    Returned,
+    Late
 }
