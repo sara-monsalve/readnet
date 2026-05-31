@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ReadNet.API.Profiles;
 using ReadNet.DataAccess.Context;
 using ReadNet.DataAccess.Repositories;
+using ReadNet.DataAccess.Seeders;
 using ReadNet.Domain.Interfaces;
 using ReadNet.Domain.Services;
 
@@ -20,8 +21,10 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 
 // Repositorios
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
@@ -30,6 +33,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 builder.Services.AddScoped<ILoanDetailRepository, LoanDetailRepository>();
+
 
 // Servicios
 builder.Services.AddScoped<IAuthorService, AuthorService>();
@@ -41,7 +45,19 @@ builder.Services.AddScoped<ILoanDetailService, LoanDetailService>();
 
 var app = builder.Build();
 
-// Configurar la canalización de solicitudes HTTP
+
+// Ejecutar Seeder automáticamente
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+
+    context.Database.Migrate();
+
+    DataSeeder.Seed(context);
+}
+
+
+// Configurar la canalización HTTP
 
 if (app.Environment.IsDevelopment())
 {
