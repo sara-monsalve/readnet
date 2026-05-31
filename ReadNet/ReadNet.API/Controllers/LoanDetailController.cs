@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ReadNet.Domain.Entities;
-using ReadNet.Domain.Services;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using ReadNet.API.DTOs.Request;
 using ReadNet.API.DTOs.Response;
+using ReadNet.Domain.Entities;
+using ReadNet.Domain.Services;
 
 namespace ReadNet.API.Controllers;
 
@@ -11,10 +12,12 @@ namespace ReadNet.API.Controllers;
 public class LoanDetailController : ControllerBase
 {
     private readonly ILoanDetailService _service;
+    private readonly IMapper _mapper;
 
-    public LoanDetailController(ILoanDetailService service)
+    public LoanDetailController(ILoanDetailService service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -22,11 +25,7 @@ public class LoanDetailController : ControllerBase
     {
         var loanDetails = await _service.GetAllAsync();
 
-        var response = loanDetails.Select(ld => new LoanDetailResponseDTO
-        {
-            LoanId = ld.LoanId,
-            BookId = ld.BookId
-        });
+        var response = _mapper.Map<IEnumerable<LoanDetailResponseDTO>>(loanDetails);
 
         return Ok(response);
     }
@@ -41,21 +40,15 @@ public class LoanDetailController : ControllerBase
         if (loanDetail == null)
             return NotFound();
 
-        return Ok(new LoanDetailResponseDTO
-        {
-            LoanId = loanDetail.LoanId,
-            BookId = loanDetail.BookId
-        });
+        var response = _mapper.Map<LoanDetailResponseDTO>(loanDetail);
+
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<ActionResult> Create(LoanDetailRequestDTO dto)
     {
-        var loanDetail = new LoanDetail
-        {
-            LoanId = dto.LoanId,
-            BookId = dto.BookId
-        };
+        var loanDetail = _mapper.Map<LoanDetail>(dto);
 
         await _service.AddAsync(loanDetail);
 

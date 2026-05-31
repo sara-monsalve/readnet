@@ -1,4 +1,6 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using ReadNet.API.Profiles;
 using ReadNet.DataAccess.Context;
 using ReadNet.DataAccess.Repositories;
 using ReadNet.Domain.Interfaces;
@@ -6,7 +8,7 @@ using ReadNet.Domain.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Agregar servicios al contenedor
 
 builder.Services.AddControllers();
 
@@ -18,7 +20,10 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Repositories
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+// Repositorios
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -26,7 +31,7 @@ builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 builder.Services.AddScoped<ILoanDetailRepository, LoanDetailRepository>();
 
-// Services
+// Servicios
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -36,7 +41,7 @@ builder.Services.AddScoped<ILoanDetailService, LoanDetailService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configurar la canalización de solicitudes HTTP
 
 if (app.Environment.IsDevelopment())
 {

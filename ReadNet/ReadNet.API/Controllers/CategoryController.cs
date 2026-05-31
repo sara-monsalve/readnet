@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ReadNet.Domain.Entities;
-using ReadNet.Domain.Services;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using ReadNet.API.DTOs.Request;
 using ReadNet.API.DTOs.Response;
+using ReadNet.Domain.Entities;
+using ReadNet.Domain.Services;
 
 namespace ReadNet.API.Controllers;
 
@@ -11,10 +12,12 @@ namespace ReadNet.API.Controllers;
 public class CategoryController : ControllerBase
 {
     private readonly ICategoryService _service;
+    private readonly IMapper _mapper;
 
-    public CategoryController(ICategoryService service)
+    public CategoryController(ICategoryService service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -22,11 +25,7 @@ public class CategoryController : ControllerBase
     {
         var categories = await _service.GetAllAsync();
 
-        var response = categories.Select(c => new CategoryResponseDTO
-        {
-            Id = c.Id,
-            Name = c.Name
-        });
+        var response = _mapper.Map<IEnumerable<CategoryResponseDTO>>(categories);
 
         return Ok(response);
     }
@@ -39,20 +38,15 @@ public class CategoryController : ControllerBase
         if (category == null)
             return NotFound();
 
-        return Ok(new CategoryResponseDTO
-        {
-            Id = category.Id,
-            Name = category.Name
-        });
+        var response = _mapper.Map<CategoryResponseDTO>(category);
+
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<ActionResult> Create(CategoryRequestDTO dto)
     {
-        var category = new Category
-        {
-            Name = dto.Name
-        };
+        var category = _mapper.Map<Category>(dto);
 
         await _service.AddAsync(category);
 
@@ -67,7 +61,7 @@ public class CategoryController : ControllerBase
         if (category == null)
             return NotFound();
 
-        category.Name = dto.Name;
+        _mapper.Map(dto, category);
 
         await _service.UpdateAsync(category);
 

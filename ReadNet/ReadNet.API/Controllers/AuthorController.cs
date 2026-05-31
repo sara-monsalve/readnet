@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ReadNet.Domain.Entities;
-using ReadNet.Domain.Services;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using ReadNet.API.DTOs.Request;
 using ReadNet.API.DTOs.Response;
+using ReadNet.Domain.Entities;
+using ReadNet.Domain.Services;
 
 namespace ReadNet.API.Controllers;
 
@@ -11,10 +12,12 @@ namespace ReadNet.API.Controllers;
 public class AuthorController : ControllerBase
 {
     private readonly IAuthorService _service;
+    private readonly IMapper _mapper;
 
-    public AuthorController(IAuthorService service)
+    public AuthorController(IAuthorService service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -22,12 +25,7 @@ public class AuthorController : ControllerBase
     {
         var authors = await _service.GetAllAsync();
 
-        var response = authors.Select(a => new AuthorResponseDTO
-        {
-            Id = a.Id,
-            Name = a.Name,
-            Country = a.Country
-        });
+        var response = _mapper.Map<IEnumerable<AuthorResponseDTO>>(authors);
 
         return Ok(response);
     }
@@ -40,22 +38,15 @@ public class AuthorController : ControllerBase
         if (author == null)
             return NotFound();
 
-        return Ok(new AuthorResponseDTO
-        {
-            Id = author.Id,
-            Name = author.Name,
-            Country = author.Country
-        });
+        var response = _mapper.Map<AuthorResponseDTO>(author);
+
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<ActionResult> Create(AuthorRequestDTO dto)
     {
-        var author = new Author
-        {
-            Name = dto.Name,
-            Country = dto.Country
-        };
+        var author = _mapper.Map<Author>(dto);
 
         await _service.AddAsync(author);
 
@@ -70,8 +61,7 @@ public class AuthorController : ControllerBase
         if (author == null)
             return NotFound();
 
-        author.Name = dto.Name;
-        author.Country = dto.Country;
+        _mapper.Map(dto, author);
 
         await _service.UpdateAsync(author);
 

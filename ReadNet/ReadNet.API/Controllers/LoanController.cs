@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ReadNet.Domain.Entities;
-using ReadNet.Domain.Services;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using ReadNet.API.DTOs.Request;
 using ReadNet.API.DTOs.Response;
+using ReadNet.Domain.Entities;
+using ReadNet.Domain.Services;
 
 namespace ReadNet.API.Controllers;
 
@@ -11,10 +12,12 @@ namespace ReadNet.API.Controllers;
 public class LoanController : ControllerBase
 {
     private readonly ILoanService _service;
+    private readonly IMapper _mapper;
 
-    public LoanController(ILoanService service)
+    public LoanController(ILoanService service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -22,14 +25,7 @@ public class LoanController : ControllerBase
     {
         var loans = await _service.GetAllAsync();
 
-        var response = loans.Select(l => new LoanResponseDTO
-        {
-            Id = l.Id,
-            LoanDate = l.LoanDate,
-            ReturnDate = l.ReturnDate,
-            Status = l.Status,
-            MemberId = l.MemberId
-        });
+        var response = _mapper.Map<IEnumerable<LoanResponseDTO>>(loans);
 
         return Ok(response);
     }
@@ -42,26 +38,15 @@ public class LoanController : ControllerBase
         if (loan == null)
             return NotFound();
 
-        return Ok(new LoanResponseDTO
-        {
-            Id = loan.Id,
-            LoanDate = loan.LoanDate,
-            ReturnDate = loan.ReturnDate,
-            Status = loan.Status,
-            MemberId = loan.MemberId
-        });
+        var response = _mapper.Map<LoanResponseDTO>(loan);
+
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<ActionResult> Create(LoanRequestDTO dto)
     {
-        var loan = new Loan
-        {
-            LoanDate = dto.LoanDate,
-            ReturnDate = dto.ReturnDate,
-            Status = dto.Status,
-            MemberId = dto.MemberId
-        };
+        var loan = _mapper.Map<Loan>(dto);
 
         await _service.AddAsync(loan);
 
@@ -76,10 +61,7 @@ public class LoanController : ControllerBase
         if (loan == null)
             return NotFound();
 
-        loan.LoanDate = dto.LoanDate;
-        loan.ReturnDate = dto.ReturnDate;
-        loan.Status = dto.Status;
-        loan.MemberId = dto.MemberId;
+        _mapper.Map(dto, loan);
 
         await _service.UpdateAsync(loan);
 

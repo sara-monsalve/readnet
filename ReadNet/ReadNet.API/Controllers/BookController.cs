@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ReadNet.Domain.Entities;
-using ReadNet.Domain.Services;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using ReadNet.API.DTOs.Request;
 using ReadNet.API.DTOs.Response;
+using ReadNet.Domain.Entities;
+using ReadNet.Domain.Services;
 
 namespace ReadNet.API.Controllers;
 
@@ -11,10 +12,12 @@ namespace ReadNet.API.Controllers;
 public class BookController : ControllerBase
 {
     private readonly IBookService _service;
+    private readonly IMapper _mapper;
 
-    public BookController(IBookService service)
+    public BookController(IBookService service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -22,15 +25,7 @@ public class BookController : ControllerBase
     {
         var books = await _service.GetAllAsync();
 
-        var response = books.Select(b => new BookResponseDTO
-        {
-            Id = b.Id,
-            Title = b.Title,
-            ISBN = b.ISBN,
-            PublishYear = b.PublishYear,
-            AuthorId = b.AuthorId,
-            CategoryId = b.CategoryId
-        });
+        var response = _mapper.Map<IEnumerable<BookResponseDTO>>(books);
 
         return Ok(response);
     }
@@ -43,28 +38,15 @@ public class BookController : ControllerBase
         if (book == null)
             return NotFound();
 
-        return Ok(new BookResponseDTO
-        {
-            Id = book.Id,
-            Title = book.Title,
-            ISBN = book.ISBN,
-            PublishYear = book.PublishYear,
-            AuthorId = book.AuthorId,
-            CategoryId = book.CategoryId
-        });
+        var response = _mapper.Map<BookResponseDTO>(book);
+
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<ActionResult> Create(BookRequestDTO dto)
     {
-        var book = new Book
-        {
-            Title = dto.Title,
-            ISBN = dto.ISBN,
-            PublishYear = dto.PublishYear,
-            AuthorId = dto.AuthorId,
-            CategoryId = dto.CategoryId
-        };
+        var book = _mapper.Map<Book>(dto);
 
         await _service.AddAsync(book);
 
@@ -79,11 +61,7 @@ public class BookController : ControllerBase
         if (book == null)
             return NotFound();
 
-        book.Title = dto.Title;
-        book.ISBN = dto.ISBN;
-        book.PublishYear = dto.PublishYear;
-        book.AuthorId = dto.AuthorId;
-        book.CategoryId = dto.CategoryId;
+        _mapper.Map(dto, book);
 
         await _service.UpdateAsync(book);
 

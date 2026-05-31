@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ReadNet.Domain.Entities;
-using ReadNet.Domain.Services;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using ReadNet.API.DTOs.Request;
 using ReadNet.API.DTOs.Response;
+using ReadNet.Domain.Entities;
+using ReadNet.Domain.Services;
 
 namespace ReadNet.API.Controllers;
 
@@ -11,10 +12,12 @@ namespace ReadNet.API.Controllers;
 public class MemberController : ControllerBase
 {
     private readonly IMemberService _service;
+    private readonly IMapper _mapper;
 
-    public MemberController(IMemberService service)
+    public MemberController(IMemberService service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -22,13 +25,7 @@ public class MemberController : ControllerBase
     {
         var members = await _service.GetAllAsync();
 
-        var response = members.Select(m => new MemberResponseDTO
-        {
-            Id = m.Id,
-            FullName = m.FullName,
-            Email = m.Email,
-            Phone = m.Phone
-        });
+        var response = _mapper.Map<IEnumerable<MemberResponseDTO>>(members);
 
         return Ok(response);
     }
@@ -41,24 +38,15 @@ public class MemberController : ControllerBase
         if (member == null)
             return NotFound();
 
-        return Ok(new MemberResponseDTO
-        {
-            Id = member.Id,
-            FullName = member.FullName,
-            Email = member.Email,
-            Phone = member.Phone
-        });
+        var response = _mapper.Map<MemberResponseDTO>(member);
+
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<ActionResult> Create(MemberRequestDTO dto)
     {
-        var member = new Member
-        {
-            FullName = dto.FullName,
-            Email = dto.Email,
-            Phone = dto.Phone
-        };
+        var member = _mapper.Map<Member>(dto);
 
         await _service.AddAsync(member);
 
@@ -73,9 +61,7 @@ public class MemberController : ControllerBase
         if (member == null)
             return NotFound();
 
-        member.FullName = dto.FullName;
-        member.Email = dto.Email;
-        member.Phone = dto.Phone;
+        _mapper.Map(dto, member);
 
         await _service.UpdateAsync(member);
 
