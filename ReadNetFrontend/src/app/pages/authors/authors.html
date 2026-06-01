@@ -1,1 +1,9 @@
-<p>authors works!</p>
+<h2>Gestión de Autores</h2>
+
+<ul>
+  @for (author of authors; track author.id) {
+    <li>
+      {{ author.name }} - {{ author.country }}
+    </li>
+  }
+</ul>

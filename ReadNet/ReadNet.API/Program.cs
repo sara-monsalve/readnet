@@ -21,10 +21,19 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Configuración de CORS para Angular
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-
 
 // Repositorios
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
@@ -33,7 +42,6 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 builder.Services.AddScoped<ILoanDetailRepository, LoanDetailRepository>();
-
 
 // Servicios
 builder.Services.AddScoped<IAuthorService, AuthorService>();
@@ -45,7 +53,6 @@ builder.Services.AddScoped<ILoanDetailService, LoanDetailService>();
 
 var app = builder.Build();
 
-
 // Ejecutar Seeder automáticamente
 using (var scope = app.Services.CreateScope())
 {
@@ -56,7 +63,6 @@ using (var scope = app.Services.CreateScope())
     DataSeeder.Seed(context);
 }
 
-
 // Configurar la canalización HTTP
 
 if (app.Environment.IsDevelopment())
@@ -66,6 +72,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Habilitar CORS
+app.UseCors("AngularPolicy");
 
 app.UseAuthorization();
 

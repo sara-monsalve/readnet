@@ -10,17 +10,14 @@ export const routes: Routes = [
     redirectTo: 'books',
     pathMatch: 'full'
   },
-
   {
     path: 'books',
     component: Books
   },
-
   {
     path: 'authors',
     component: Authors
   },
-
   {
     path: 'members',
     component: Members
