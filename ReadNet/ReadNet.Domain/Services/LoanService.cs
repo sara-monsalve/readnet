@@ -24,11 +24,19 @@ public class LoanService : ILoanService
 
     public async Task AddAsync(Loan loan)
     {
+        if (loan.ReturnDate <= loan.LoanDate)
+            throw new ArgumentException(
+                "La fecha de devolución debe ser posterior a la fecha del préstamo.");
+
         await _repository.AddAsync(loan);
     }
 
     public async Task UpdateAsync(Loan loan)
     {
+        if (loan.ReturnDate <= loan.LoanDate)
+            throw new ArgumentException(
+                "La fecha de devolución debe ser posterior a la fecha del préstamo.");
+
         await _repository.UpdateAsync(loan);
     }
 

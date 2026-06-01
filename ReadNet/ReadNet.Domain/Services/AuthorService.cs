@@ -24,11 +24,23 @@ public class AuthorService : IAuthorService
 
     public async Task AddAsync(Author author)
     {
+        if (string.IsNullOrWhiteSpace(author.Name))
+            throw new ArgumentException("El nombre del autor es obligatorio.");
+
+        if (string.IsNullOrWhiteSpace(author.Country))
+            throw new ArgumentException("El país del autor es obligatorio.");
+
         await _repository.AddAsync(author);
     }
 
     public async Task UpdateAsync(Author author)
     {
+        if (string.IsNullOrWhiteSpace(author.Name))
+            throw new ArgumentException("El nombre del autor es obligatorio.");
+
+        if (string.IsNullOrWhiteSpace(author.Country))
+            throw new ArgumentException("El país del autor es obligatorio.");
+
         await _repository.UpdateAsync(author);
     }
 

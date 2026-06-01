@@ -24,11 +24,29 @@ public class BookService : IBookService
 
     public async Task AddAsync(Book book)
     {
+        if (string.IsNullOrWhiteSpace(book.Title))
+            throw new ArgumentException("El título del libro es obligatorio.");
+
+        if (string.IsNullOrWhiteSpace(book.ISBN))
+            throw new ArgumentException("El ISBN es obligatorio.");
+
+        if (book.PublishYear <= 0)
+            throw new ArgumentException("El año de publicación debe ser válido.");
+
         await _repository.AddAsync(book);
     }
 
     public async Task UpdateAsync(Book book)
     {
+        if (string.IsNullOrWhiteSpace(book.Title))
+            throw new ArgumentException("El título del libro es obligatorio.");
+
+        if (string.IsNullOrWhiteSpace(book.ISBN))
+            throw new ArgumentException("El ISBN es obligatorio.");
+
+        if (book.PublishYear <= 0)
+            throw new ArgumentException("El año de publicación debe ser válido.");
+
         await _repository.UpdateAsync(book);
     }
 

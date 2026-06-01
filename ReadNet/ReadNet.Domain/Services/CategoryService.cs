@@ -24,11 +24,17 @@ public class CategoryService : ICategoryService
 
     public async Task AddAsync(Category category)
     {
+        if (string.IsNullOrWhiteSpace(category.Name))
+            throw new ArgumentException("El nombre de la categoría es obligatorio.");
+
         await _repository.AddAsync(category);
     }
 
     public async Task UpdateAsync(Category category)
     {
+        if (string.IsNullOrWhiteSpace(category.Name))
+            throw new ArgumentException("El nombre de la categoría es obligatorio.");
+
         await _repository.UpdateAsync(category);
     }
 

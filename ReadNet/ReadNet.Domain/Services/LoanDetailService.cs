@@ -24,6 +24,12 @@ public class LoanDetailService : ILoanDetailService
 
     public async Task AddAsync(LoanDetail loanDetail)
     {
+        if (loanDetail.LoanId <= 0)
+            throw new ArgumentException("El identificador del préstamo debe ser válido.");
+
+        if (loanDetail.BookId <= 0)
+            throw new ArgumentException("El identificador del libro debe ser válido.");
+
         await _repository.AddAsync(loanDetail);
     }
 

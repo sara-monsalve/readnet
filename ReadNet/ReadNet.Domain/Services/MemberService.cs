@@ -24,11 +24,23 @@ public class MemberService : IMemberService
 
     public async Task AddAsync(Member member)
     {
+        if (string.IsNullOrWhiteSpace(member.FullName))
+            throw new ArgumentException("El nombre del miembro es obligatorio.");
+
+        if (string.IsNullOrWhiteSpace(member.Email))
+            throw new ArgumentException("El correo electrónico es obligatorio.");
+
         await _repository.AddAsync(member);
     }
 
     public async Task UpdateAsync(Member member)
     {
+        if (string.IsNullOrWhiteSpace(member.FullName))
+            throw new ArgumentException("El nombre del miembro es obligatorio.");
+
+        if (string.IsNullOrWhiteSpace(member.Email))
+            throw new ArgumentException("El correo electrónico es obligatorio.");
+
         await _repository.UpdateAsync(member);
     }
 
