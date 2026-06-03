@@ -1,11 +1,15 @@
-<nav>
-  <a routerLink="/books">Libros</a>
-  |
-  <a routerLink="/authors">Autores</a>
-  |
-  <a routerLink="/members">Miembros</a>
-</nav>
+<header class="navbar">
+  <div class="logo">
+     ReadNet
+  </div>
 
-<hr>
+  <nav class="menu">
+    <a routerLink="/books">Libros</a>
+    <a routerLink="/authors">Autores</a>
+    <a routerLink="/members">Miembros</a>
+  </nav>
+</header>
 
-<router-outlet></router-outlet>
+<main class="container">
+  <router-outlet></router-outlet>
+</main>

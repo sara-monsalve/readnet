@@ -1,9 +1,62 @@
 <h2>Gestión de Autores</h2>
 
-<ul>
-  @for (author of authors; track author.id) {
-    <li>
-      {{ author.name }} - {{ author.country }}
-    </li>
-  }
-</ul>
+<div class="toolbar">
+    <button class="btn-primary" (click)="openForm()">
+        + Nuevo Autor
+    </button>
+</div>
+
+@if (showForm) {
+
+<div class="form-card">
+
+    <h3>Nuevo Autor</h3>
+
+    <div class="form-group">
+        <label>Nombre</label>
+        <input
+            type="text"
+            [(ngModel)]="newAuthor.name">
+    </div>
+
+    <div class="form-group">
+        <label>País</label>
+        <input
+            type="text"
+            [(ngModel)]="newAuthor.country">
+    </div>
+
+    <button
+        class="btn-primary"
+        (click)="saveAuthor()">
+        Guardar
+    </button>
+
+</div>
+
+}
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>País</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @for (author of authors; track author.id) {
+        <tr>
+            <td>{{ author.id }}</td>
+            <td>{{ author.name }}</td>
+            <td>{{ author.country }}</td>
+            <td>
+                <button class="btn-edit">Editar</button>
+                <button class="btn-delete">Eliminar</button>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

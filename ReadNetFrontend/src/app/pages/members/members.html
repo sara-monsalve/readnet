@@ -1,9 +1,34 @@
 <h2>Gestión de Miembros</h2>
 
-<ul>
-  @for (member of members; track member.id) {
-    <li>
-      {{ member.fullName }} - {{ member.email }}
-    </li>
-  }
-</ul>
+<div class="toolbar">
+    <button class="btn-primary">
+        + Nuevo Miembro
+    </button>
+</div>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre Completo</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @for (member of members; track member.id) {
+            <tr>
+                <td>{{ member.id }}</td>
+                <td>{{ member.fullName }}</td>
+                <td>{{ member.email }}</td>
+                <td>{{ member.phone }}</td>
+                <td>
+                    <button class="btn-edit">Editar</button>
+                    <button class="btn-delete">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

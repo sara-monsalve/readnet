@@ -8,6 +8,11 @@ export interface Author {
   country: string;
 }
 
+export interface CreateAuthor {
+  name: string;
+  country: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,5 +24,9 @@ export class AuthorService {
 
   getAuthors(): Observable<Author[]> {
     return this.http.get<Author[]>(this.apiUrl);
+  }
+
+  createAuthor(author: CreateAuthor): Observable<any> {
+    return this.http.post(this.apiUrl, author);
   }
 }
