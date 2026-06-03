@@ -67,4 +67,25 @@ export class Authors implements OnInit {
         }
       });
   }
+
+  deleteAuthor(id: number): void {
+
+    const confirmDelete = confirm(
+      '¿Está seguro de eliminar este autor?'
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    this.authorService.deleteAuthor(id)
+      .subscribe({
+        next: () => {
+          this.loadAuthors();
+        },
+        error: (error) => {
+          console.error('Error al eliminar autor:', error);
+        }
+      });
+  }
 }

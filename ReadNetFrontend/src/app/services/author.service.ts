@@ -29,4 +29,8 @@ export class AuthorService {
   createAuthor(author: CreateAuthor): Observable<any> {
     return this.http.post(this.apiUrl, author);
   }
+
+  deleteAuthor(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }
