@@ -20,6 +20,8 @@ export class Authors implements OnInit {
   authors: Author[] = [];
 
   showForm = false;
+  isEditing = false;
+  editingAuthorId = 0;
 
   newAuthor: CreateAuthor = {
     name: '',
@@ -44,23 +46,53 @@ export class Authors implements OnInit {
   }
 
   openForm(): void {
+
+    this.isEditing = false;
+
+    this.newAuthor = {
+      name: '',
+      country: ''
+    };
+
+    this.showForm = true;
+  }
+
+  editAuthor(author: Author): void {
+
+    this.isEditing = true;
+    this.editingAuthorId = author.id;
+
+    this.newAuthor = {
+      name: author.name,
+      country: author.country
+    };
+
     this.showForm = true;
   }
 
   saveAuthor(): void {
 
-    this.authorService.createAuthor(this.newAuthor)
+    if (this.isEditing) {
+
+      this.authorService
+        .updateAuthor(this.editingAuthorId, this.newAuthor)
+        .subscribe({
+          next: () => {
+            this.finishOperation();
+          },
+          error: (error) => {
+            console.error('Error al editar autor:', error);
+          }
+        });
+
+      return;
+    }
+
+    this.authorService
+      .createAuthor(this.newAuthor)
       .subscribe({
         next: () => {
-
-          this.newAuthor = {
-            name: '',
-            country: ''
-          };
-
-          this.showForm = false;
-
-          this.loadAuthors();
+          this.finishOperation();
         },
         error: (error) => {
           console.error('Error al crear autor:', error);
@@ -78,7 +110,8 @@ export class Authors implements OnInit {
       return;
     }
 
-    this.authorService.deleteAuthor(id)
+    this.authorService
+      .deleteAuthor(id)
       .subscribe({
         next: () => {
           this.loadAuthors();
@@ -87,5 +120,19 @@ export class Authors implements OnInit {
           console.error('Error al eliminar autor:', error);
         }
       });
+  }
+
+  finishOperation(): void {
+
+    this.newAuthor = {
+      name: '',
+      country: ''
+    };
+
+    this.showForm = false;
+    this.isEditing = false;
+    this.editingAuthorId = 0;
+
+    this.loadAuthors();
   }
 }

@@ -10,7 +10,9 @@
 
 <div class="form-card">
 
-    <h3>Nuevo Autor</h3>
+    <h3>
+        {{ isEditing ? 'Editar Autor' : 'Nuevo Autor' }}
+    </h3>
 
     <div class="form-group">
         <label>Nombre</label>
@@ -29,7 +31,7 @@
     <button
         class="btn-primary"
         (click)="saveAuthor()">
-        Guardar
+        {{ isEditing ? 'Actualizar' : 'Guardar' }}
     </button>
 
 </div>
@@ -53,7 +55,10 @@
             <td>{{ author.name }}</td>
             <td>{{ author.country }}</td>
             <td>
-                <button class="btn-edit">
+
+                <button
+                    class="btn-edit"
+                    (click)="editAuthor(author)">
                     Editar
                 </button>
 
@@ -62,6 +67,7 @@
                     (click)="deleteAuthor(author.id)">
                     Eliminar
                 </button>
+
             </td>
         </tr>
         }
