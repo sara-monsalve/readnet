@@ -1,10 +1,63 @@
 <h2>Gestión de Libros</h2>
 
 <div class="toolbar">
-    <button class="btn-primary">
+    <button class="btn-primary" (click)="openForm()">
         + Nuevo Libro
     </button>
 </div>
+
+@if (showForm) {
+
+<div class="form-card">
+
+    <h3>
+        {{ isEditing ? 'Editar Libro' : 'Nuevo Libro' }}
+    </h3>
+
+    <div class="form-group">
+        <label>Título</label>
+        <input
+            type="text"
+            [(ngModel)]="newBook.title">
+    </div>
+
+    <div class="form-group">
+        <label>ISBN</label>
+        <input
+            type="text"
+            [(ngModel)]="newBook.isbn">
+    </div>
+
+    <div class="form-group">
+        <label>Año</label>
+        <input
+            type="number"
+            [(ngModel)]="newBook.publishYear">
+    </div>
+
+    <div class="form-group">
+        <label>Author ID</label>
+        <input
+            type="number"
+            [(ngModel)]="newBook.authorId">
+    </div>
+
+    <div class="form-group">
+        <label>Category ID</label>
+        <input
+            type="number"
+            [(ngModel)]="newBook.categoryId">
+    </div>
+
+    <button
+        class="btn-primary"
+        (click)="saveBook()">
+        {{ isEditing ? 'Actualizar' : 'Guardar' }}
+    </button>
+
+</div>
+
+}
 
 <table class="data-table">
     <thead>
@@ -19,16 +72,27 @@
 
     <tbody>
         @for (book of books; track book.id) {
-            <tr>
-                <td>{{ book.id }}</td>
-                <td>{{ book.title }}</td>
-                <td>{{ book.isbn }}</td>
-                <td>{{ book.publishYear }}</td>
-                <td>
-                    <button class="btn-edit">Editar</button>
-                    <button class="btn-delete">Eliminar</button>
-                </td>
-            </tr>
+        <tr>
+            <td>{{ book.id }}</td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.isbn }}</td>
+            <td>{{ book.publishYear }}</td>
+            <td>
+
+                <button
+                    class="btn-edit"
+                    (click)="editBook(book)">
+                    Editar
+                </button>
+
+                <button
+                    class="btn-delete"
+                    (click)="deleteBook(book.id)">
+                    Eliminar
+                </button>
+
+            </td>
+        </tr>
         }
     </tbody>
 </table>
