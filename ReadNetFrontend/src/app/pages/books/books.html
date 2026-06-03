@@ -1,3 +1,9 @@
 <h2>Gestión de Libros</h2>
 
-<p>Página de libros funcionando correctamente.</p>
+<ul>
+  @for (book of books; track book.id) {
+    <li>
+      {{ book.title }} ({{ book.publishYear }})
+    </li>
+  }
+</ul>
